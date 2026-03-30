@@ -1,2 +1,2 @@
 # lasotuvi
-Wed tạo lá số tử vi 
+Một Wed tạo lá số tử vi 
