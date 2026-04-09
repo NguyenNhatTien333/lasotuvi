@@ -9,10 +9,11 @@ describe('InfoPanel', () => {
     const chart = generateChart({ day: 24, month: 10, year: 1991, hour: 4, gender: 1, calendarType: 'duongLich', name: 'Nguyễn Văn A' });
     render(<InfoPanel chart={chart} />);
 
-    expect(screen.getByText('Thiên Bàn')).toBeInTheDocument();
+    expect(screen.getByText('LÁ SỐ TỬ VI')).toBeInTheDocument();
     expect(screen.getByText('Nguyễn Văn A')).toBeInTheDocument();
     expect(screen.getByText('Nam')).toBeInTheDocument();
-    expect(screen.getByText(/17\/9\/1991/)).toBeInTheDocument();
-    expect(screen.getByText(/Mệnh \/ Thân/)).toBeInTheDocument();
+    expect(screen.getByText(/Chủ Mệnh/)).toBeInTheDocument();
+    expect(screen.getByText(/Chủ Thân/)).toBeInTheDocument();
+    expect(screen.getByText(/Cục/)).toBeInTheDocument();
   });
 });

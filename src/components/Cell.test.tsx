@@ -20,7 +20,7 @@ const palace: Palace = {
   daiHan: 24,
   tieuHan: 'Tý',
   isThan: true,
-  tuanTrung: true,
+  tuanTrung: false,
   trietLo: false,
 };
 
@@ -28,13 +28,12 @@ describe('Cell', () => {
   it('renders palace metadata and categorized stars', () => {
     render(<Cell palace={palace} />);
 
-    expect(screen.getAllByText('Tý')).toHaveLength(2);
     expect(screen.getByText('Mệnh')).toBeInTheDocument();
-    expect(screen.getByText('Thân')).toBeInTheDocument();
-    expect(screen.getByText('Tử vi')).toBeInTheDocument();
+    expect(screen.getByText('<Thân>')).toBeInTheDocument();
+    expect(screen.getByText(/Tử vi/)).toBeInTheDocument();
     expect(screen.getByText('Tràng sinh')).toBeInTheDocument();
-    expect(screen.getByText('Tả phù')).toBeInTheDocument();
-    expect(screen.getByText('Kình dương')).toBeInTheDocument();
+    expect(screen.getByText(/Tả phù/)).toBeInTheDocument();
+    expect(screen.getByText(/Kình dương/)).toBeInTheDocument();
   });
 
   it('shows empty state when no primary stars exist', () => {

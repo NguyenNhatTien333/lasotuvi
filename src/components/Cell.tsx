@@ -1,87 +1,128 @@
 import React from 'react';
-import type { Palace, Star } from '@/lib/lasotuvi/types';
+import type { Palace, Star, Element } from '@/lib/lasotuvi/types';
 
-const elementClass = (element: Star['saoNguHanh']) => {
-  if (element === 'K') return 'text-kim';
-  if (element === 'M') return 'text-moc';
-  if (element === 'T') return 'text-thuy';
-  if (element === 'H') return 'text-hoa';
-  return 'text-tho';
+// Maps element code → hex color per spec-2.md (Kim/Thổ) + Tailwind palette (Mộc/Thủy/Hỏa)
+export const getColorByElement = (element: Element): string => {
+  switch (element) {
+    case 'K': return '#D4AF37'; // Kim — vàng đồng
+    case 'M': return '#10B981'; // Mộc — xanh lá (Tailwind emerald)
+    case 'T': return '#3B82F6'; // Thủy — xanh dương (Tailwind blue)
+    case 'H': return '#EF4444'; // Hỏa — đỏ (Tailwind red)
+    case 'O': return '#A52A2A'; // Thổ — nâu đậm (spec)
+  }
 };
 
-const statusClass = (status: Star['saoDacTinh']) => {
-  if (status === 'V') return 'star-v';
-  if (status === 'M') return 'star-m';
-  if (status === 'Đ') return 'star-d';
-  if (status === 'H') return 'star-h';
-  return 'star-b';
+const statusWeight = (status: Star['saoDacTinh']): React.CSSProperties => {
+  switch (status) {
+    case 'V': return { fontWeight: 700 };
+    case 'M': return { fontWeight: 600 };
+    case 'Đ': return { fontWeight: 500 };
+    case 'B': return { fontWeight: 400 };
+    case 'H': return { fontWeight: 300, opacity: 0.7 };
+    default:  return { fontWeight: 400 };
+  }
 };
 
 const classifyStars = (stars: Star[]) => {
-  const primary = stars.filter((star) => star.saoLoai === 1);
-  const lifecycle = stars.filter((star) => star.vongTrangSinh === 1);
-  const auspicious = stars.filter((star) => star.saoLoai > 1 && star.saoLoai < 10 && star.vongTrangSinh !== 1);
-  const inauspicious = stars.filter((star) => star.saoLoai >= 10 && star.vongTrangSinh !== 1);
+  const primary      = stars.filter((s) => s.saoLoai === 1);
+  const lifecycle    = stars.filter((s) => s.vongTrangSinh === 1);
+  const auspicious   = stars.filter((s) => s.saoLoai > 1 && s.saoLoai < 10 && s.vongTrangSinh !== 1);
+  const inauspicious = stars.filter((s) => s.saoLoai >= 10 && s.vongTrangSinh !== 1);
   return { primary, lifecycle, auspicious, inauspicious };
 };
 
-const StarText = ({ star, large = false }: { star: Star; large?: boolean }) => (
-  <div className={`${elementClass(star.saoNguHanh)} ${statusClass(star.saoDacTinh)} ${large ? 'text-[11px] font-semibold md:text-sm' : 'text-[9px] leading-tight md:text-[11px]'}`}>
-    {star.saoTen}
-    {star.saoDacTinh ? <span className="ml-1 opacity-75">{star.saoDacTinh}</span> : null}
-  </div>
-);
+const StarItem = ({ star, size = 'sm' }: { star: Star; size?: 'sm' | 'lg' }) => {
+  const color = getColorByElement(star.saoNguHanh);
+  const weight = statusWeight(star.saoDacTinh);
+  const sizeClass = size === 'lg'
+    ? 'text-[13px] leading-snug md:text-[15px]'
+    : 'text-[9px] leading-tight md:text-[11px]';
+
+  return (
+    <div
+      className={sizeClass}
+      style={{ color, ...weight }}
+    >
+      {star.saoTen}
+      {star.saoDacTinh ? `(${star.saoDacTinh})` : null}
+    </div>
+  );
+};
 
 export function Cell({ palace }: { palace: Palace }) {
   const { primary, lifecycle, auspicious, inauspicious } = classifyStars(palace.cungSao);
 
+  // Tràng sinh label from lifecycle stars
+  const trangSinhLabel = lifecycle.length > 0 ? lifecycle[0].saoTen : null;
+
   return (
     <div
-      className={[
-        'relative flex aspect-square min-h-[150px] flex-col overflow-hidden border border-stone-400/70 bg-stone-50/90 p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]',
-        palace.tuanTrung ? 'ring-2 ring-amber-500/80' : '',
-        palace.trietLo ? 'ring-2 ring-rose-500/70' : '',
-      ].join(' ')}
+      className="relative flex min-h-[160px] flex-col overflow-hidden bg-[#FFFEF5] p-1.5"
+      style={{ border: '1px solid #C4B49A' }}
     >
-      <div className="mb-1 flex items-start justify-between gap-2 text-[10px] uppercase tracking-[0.14em] text-stone-600 md:text-[11px]">
-        <div>
-          <div className="font-semibold text-stone-800">{palace.cungChi}</div>
-          <div>{palace.palaceRole}</div>
+      {/* ── HEADER: tieuHan left | tên cung center | daiHan right ── */}
+      <div className="mb-0.5 flex items-start justify-between text-[9px] leading-tight md:text-[10px]">
+        <div className="text-stone-500">{palace.tieuHan ?? ''}</div>
+        <div className="flex flex-col items-center text-center">
+          <span className="font-bold uppercase tracking-wide text-stone-800 md:text-[11px]">
+            {palace.palaceRole ?? palace.cungTen}
+          </span>
+          {palace.isThan ? (
+            <span className="text-[8px] font-semibold uppercase tracking-widest text-amber-700">
+              &lt;Thân&gt;
+            </span>
+          ) : null}
         </div>
-        <div className="text-right">
-          {palace.isThan ? <div className="font-semibold text-amber-700">Thân</div> : null}
+        <div className="text-right text-stone-600">
           {palace.daiHan ? <div>{palace.daiHan}</div> : null}
-          {palace.tieuHan ? <div>{palace.tieuHan}</div> : null}
         </div>
       </div>
 
-      <div className="grid flex-1 grid-rows-[auto_1fr_auto] gap-1">
-        <div className="min-h-[18px] space-y-0.5 text-left text-stone-600">
-          {lifecycle.slice(0, 2).map((star) => (
-            <StarText key={`${star.saoID}-${palace.cungID}`} star={star} />
+      {/* ── CHI + CHÍNH TINH sub-header ── */}
+      <div className="mb-1 text-center">
+        <div className="text-[9px] text-stone-500 md:text-[10px]">{palace.cungChi}</div>
+        {primary.length > 0 ? (
+          <div className="flex flex-col items-center gap-0.5">
+            {primary.map((star) => (
+              <div
+                key={`p-${star.saoID}-${palace.cungID}`}
+                className="font-bold uppercase leading-tight text-[13px] md:text-[15px]"
+                style={{ color: getColorByElement(star.saoNguHanh), ...statusWeight(star.saoDacTinh) }}
+              >
+                {star.saoTen}
+                {star.saoDacTinh ? `(${star.saoDacTinh})` : ''}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-[10px] uppercase tracking-widest text-stone-400">Trống</div>
+        )}
+      </div>
+
+      {/* ── MAIN 3-COL: cát left | spacer | hung right ── */}
+      <div className="flex flex-1 gap-0.5 overflow-hidden">
+        {/* Cát tinh — left */}
+        <div className="flex-1 space-y-0.5 text-left">
+          {auspicious.map((star) => (
+            <StarItem key={`a-${star.saoID}-${palace.cungID}`} star={star} />
           ))}
         </div>
 
-        <div className="flex flex-col items-center justify-center text-center">
-          {primary.length > 0 ? (
-            primary.map((star) => <StarText key={`${star.saoID}-${palace.cungID}`} star={star} large />)
-          ) : (
-            <div className="text-[10px] uppercase tracking-[0.18em] text-stone-400">Trống</div>
-          )}
+        {/* Hung tinh — right */}
+        <div className="flex-1 space-y-0.5 text-right">
+          {inauspicious.map((star) => (
+            <StarItem key={`i-${star.saoID}-${palace.cungID}`} star={star} />
+          ))}
         </div>
+      </div>
 
-        <div className="grid grid-cols-2 gap-2 text-[9px] md:text-[11px]">
-          <div className="space-y-0.5 text-left text-sky-700">
-            {auspicious.slice(0, 6).map((star) => (
-              <StarText key={`${star.saoID}-${palace.cungID}`} star={star} />
-            ))}
-          </div>
-          <div className="space-y-0.5 text-right text-rose-700">
-            {inauspicious.slice(0, 6).map((star) => (
-              <StarText key={`${star.saoID}-${palace.cungID}`} star={star} />
-            ))}
-          </div>
-        </div>
+      {/* ── FOOTER: tràng sinh left | tháng right ── */}
+      <div
+        className="mt-0.5 flex items-end justify-between text-[9px] text-stone-600"
+        style={{ borderTop: '1px solid #E5D9C6' }}
+      >
+        <span>{trangSinhLabel ?? ''}</span>
+        <span>{palace.tieuHan ? `Tháng ${palace.tieuHan}` : ''}</span>
       </div>
     </div>
   );

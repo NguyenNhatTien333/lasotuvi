@@ -2,12 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap');
+
 :root {
   --color-kim: #D4AF37;
   --color-moc: #10B981;
   --color-thuy: #3B82F6;
   --color-hoa: #EF4444;
-  --color-tho: #92400E;
+  --color-tho: #A52A2A;
+  --bg-paper: #FFFEF5;
+  --border-outer: 2px solid #6B5B3E;
+  --border-inner: 1px solid #C4B49A;
 }
 
 body {
@@ -37,6 +42,21 @@ body {
 
 .text-tho {
   color: var(--color-tho);
+}
+
+/* Traditional chart paper background */
+.chart-paper {
+  background-color: var(--bg-paper);
+}
+
+/* Cell outer border (thick) */
+.chart-outer-border {
+  border: var(--border-outer);
+}
+
+/* Cell inner border (thin) */
+.cell-border {
+  border: var(--border-inner);
 }
 
 /* Star status colors */

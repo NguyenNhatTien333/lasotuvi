@@ -9,12 +9,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Ngũ hành colors
-        kim: '#D4AF37',  // Kim (Metal) - Vàng kim
-        moc: '#10B981',  // Mộc (Wood) - Xanh lá
-        thuy: '#3B82F6', // Thủy (Water) - Xanh dương
-        hoa: '#EF4444',  // Hỏa (Fire) - Đỏ
-        tho: '#92400E',  // Thổ (Earth) - Nâu đất
+        // Ngũ hành colors — Kim/Thổ theo spec-2.md, Mộc/Thủy/Hỏa giữ Tailwind
+        kim: '#D4AF37',  // Kim (Metal) - Vàng đồng
+        moc: '#10B981',  // Mộc (Wood) - Xanh lá (Tailwind emerald)
+        thuy: '#3B82F6', // Thủy (Water) - Xanh dương (Tailwind blue)
+        hoa: '#EF4444',  // Hỏa (Fire) - Đỏ (Tailwind red)
+        tho: '#A52A2A',  // Thổ (Earth) - Nâu đậm (spec)
+      },
+      fontFamily: {
+        serif: ['Noto Serif', 'Georgia', 'Times New Roman', 'serif'],
       },
     },
   },
