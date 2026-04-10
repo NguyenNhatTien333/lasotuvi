@@ -36,6 +36,39 @@ describe('engine', () => {
     expect(chart.palaces.some((palace) => palace.trietLo)).toBe(true);
   });
 
+  it('assigns saoDacTinh to Thiên Phủ based on palace position', () => {
+    // Mapping palace positions 1–12 (Tý → Hợi) to expected Thiên Phủ states
+    const THIEN_PHU_STATUS: Record<number, string> = {
+      1: 'M', // Tý   - Miếu
+      2: 'B', // Sửu  - Bình hoà
+      3: 'M', // Dần  - Miếu
+      4: 'B', // Mão  - Bình hoà
+      5: 'V', // Thìn - Vượng
+      6: 'Đ', // Tị   - Đắc
+      7: 'M', // Ngọ  - Miếu
+      8: 'Đ', // Mùi  - Đắc
+      9: 'M', // Thân - Miếu
+      10: 'B', // Dậu  - Bình hoà
+      11: 'V', // Tuất - Vượng
+      12: 'Đ', // Hợi  - Đắc
+    };
+
+    const chart = generateChart({
+      day: 24,
+      month: 10,
+      year: 1991,
+      hour: 4,
+      gender: 1,
+      calendarType: 'duongLich',
+    });
+
+    const thienPhu = chart.palaces.flatMap((p) => p.cungSao).find((s) => s.saoID === 7);
+
+    expect(thienPhu).toBeDefined();
+    expect(thienPhu!.saoDacTinh).not.toBeNull();
+    expect(thienPhu!.saoDacTinh).toBe(THIEN_PHU_STATUS[thienPhu!.saoViTriCung!]);
+  });
+
   it('passes internal engine verification', () => {
     expect(verifyEngine()).toBe(true);
   });

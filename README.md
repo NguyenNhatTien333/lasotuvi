@@ -9,7 +9,15 @@ Ung dung lap la so Tu Vi tren nen Next.js + TypeScript, tap trung vao:
 ## Tai lieu
 
 - Huong dan chay nhanh: xem [QUICK-START.md](QUICK-START.md)
-- Dac ta cai tien giao dien: xem [spec-2.md](spec-2.md)
+- Dac ta cai tien giao dien: xem [spec/spec-2.md](spec/spec-2.md)
+- He thong agent va quy trinh AI: xem [.github/agents.md](.github/agents.md)
+
+## Cap nhat gan day
+
+- Bo sung mapping `saoDacTinh` cho sao Thien Phu trong engine tinh toan.
+- Them regression test xac nhan trang thai Thien Phu theo vi tri 12 cung.
+- Chuyen tai lieu dac ta UI vao thu muc `spec/` de tach rieng voi tai lieu van hanh.
+- Bo sung bo `.github/instructions` va `.github/prompts` de chuan hoa tac vu AI/code review.
 
 ## Yeu cau moi truong
 
@@ -57,6 +65,9 @@ npm run test && npm run lint && npm run build
 - src/components: UI components (InputForm, Chart, Cell, InfoPanel)
 - src/lib/lasotuvi: engine tinh toan va cac ham nghiep vu
 - src/test: setup test
+- spec: dac ta nghiep vu va giao dien
+- .github/instructions: huong dan theo tung nhom tac vu
+- .github/prompts: prompt mau cho feature, bugfix va release gate
 
 ## Tinh nang da co
 
@@ -71,3 +82,24 @@ npm run test && npm run lint && npm run build
 
 - localStorage chua bat o giai doan hien tai
 - Da ngon ngu va luan giai chi tiet chua nam trong dot chuyen doi nay
+
+## Day code len git
+
+Chay gate truoc khi day code:
+
+```bash
+npm run test && npm run lint && npm run build
+```
+
+Commit cac thay doi hien tai:
+
+```bash
+git add -A README.md QUICK-START.md spec-2.md spec/spec-2.md .github src/lib/lasotuvi/engine.ts src/lib/lasotuvi/engine.test.ts
+git commit -m "feat: bo sung trang thai Thien Phu va dong bo tai lieu"
+```
+
+Day len remote `origin` tren nhanh `main`:
+
+```bash
+git push origin main
+```
