@@ -20,6 +20,7 @@ import {
   timTrangSinh,
   timTriet,
   timTuVi,
+  tinhAmDuongNamSinh,
 } from './calculations';
 
 describe('calculations', () => {
@@ -71,5 +72,11 @@ describe('calculations', () => {
     expect(result.canNam).toBe(8);
     expect(result.chiNam).toBe(8);
     expect(result.canNgay).toBeGreaterThan(0);
+  });
+
+  it('derives yin-yang from the year ending digit', () => {
+    expect(tinhAmDuongNamSinh(2008)).toBe(1);
+    expect(tinhAmDuongNamSinh(1991)).toBe(-1);
+    expect(tinhAmDuongNamSinh(2000)).toBe(1);
   });
 });

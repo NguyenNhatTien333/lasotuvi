@@ -12,6 +12,52 @@ export const NGU_HANH_MAP: Record<Element, { name: string; css: string; cuc?: nu
 };
 
 /**
+ * Nạp Âm entry for each of the 30 sexagenary pairs
+ */
+export interface NapAmEntry {
+  ten: string;       // e.g. "Hải Trung Kim"
+  yNghia: string;    // e.g. "Vàng dưới biển"
+  nguHanh: Element;  // K | M | T | H | O
+}
+
+/**
+ * 30 Nạp Âm names in sexagenary order (index = floor(sexagenary_index / 2))
+ * sexagenary_index is the 0-based position in the 60-year cycle starting from Giáp Tý.
+ */
+export const NAP_AM_NAMES: NapAmEntry[] = [
+  { ten: 'Hải Trung Kim',     yNghia: 'Vàng dưới biển',       nguHanh: 'K' }, // 0  Giáp Tý   / Ất Sửu
+  { ten: 'Lộ Trung Hỏa',     yNghia: 'Lửa trong lò',          nguHanh: 'H' }, // 1  Bính Dần  / Đinh Mão
+  { ten: 'Đại Lâm Mộc',      yNghia: 'Cây trong rừng lớn',    nguHanh: 'M' }, // 2  Mậu Thìn  / Kỷ Tỵ
+  { ten: 'Lộ Bàng Thổ',      yNghia: 'Đất giữa đường',        nguHanh: 'O' }, // 3  Canh Ngọ  / Tân Mùi
+  { ten: 'Kiếm Phong Kim',    yNghia: 'Vàng đầu mũi kiếm',    nguHanh: 'K' }, // 4  Nhâm Thân / Quý Dậu
+  { ten: 'Sơn Đầu Hỏa',      yNghia: 'Lửa trên núi',          nguHanh: 'H' }, // 5  Giáp Tuất / Ất Hợi
+  { ten: 'Giản Hạ Thủy',     yNghia: 'Nước dưới khe',         nguHanh: 'T' }, // 6  Bính Tý   / Đinh Sửu
+  { ten: 'Thành Đầu Thổ',    yNghia: 'Đất trên thành',        nguHanh: 'O' }, // 7  Mậu Dần   / Kỷ Mão
+  { ten: 'Bạch Lạp Kim',     yNghia: 'Vàng trong nến rắn',    nguHanh: 'K' }, // 8  Canh Thìn / Tân Tỵ
+  { ten: 'Dương Liễu Mộc',   yNghia: 'Cây dương liễu',        nguHanh: 'M' }, // 9  Nhâm Ngọ  / Quý Mùi
+  { ten: 'Tuyền Trung Thủy', yNghia: 'Nước trong suối',       nguHanh: 'T' }, // 10 Giáp Thân / Ất Dậu
+  { ten: 'Ốc Thượng Thổ',    yNghia: 'Đất trên nóc nhà',      nguHanh: 'O' }, // 11 Bính Tuất / Đinh Hợi
+  { ten: 'Tích Lịch Hỏa',    yNghia: 'Lửa sấm sét',           nguHanh: 'H' }, // 12 Mậu Tý   / Kỷ Sửu
+  { ten: 'Tùng Bách Mộc',    yNghia: 'Cây tùng bách',         nguHanh: 'M' }, // 13 Canh Dần  / Tân Mão
+  { ten: 'Trường Lưu Thủy',  yNghia: 'Dòng nước lớn',         nguHanh: 'T' }, // 14 Nhâm Thìn / Quý Tỵ
+  { ten: 'Sa Trung Kim',      yNghia: 'Vàng trong cát',        nguHanh: 'K' }, // 15 Giáp Ngọ  / Ất Mùi
+  { ten: 'Sơn Hạ Hỏa',       yNghia: 'Lửa dưới chân núi',    nguHanh: 'H' }, // 16 Bính Thân / Đinh Dậu
+  { ten: 'Bình Địa Mộc',     yNghia: 'Cây ở đồng bằng',       nguHanh: 'M' }, // 17 Mậu Tuất  / Kỷ Hợi
+  { ten: 'Bích Thượng Thổ',  yNghia: 'Đất trên vách',         nguHanh: 'O' }, // 18 Canh Tý   / Tân Sửu
+  { ten: 'Kim Bạch Kim',      yNghia: 'Vàng pha bạch kim',     nguHanh: 'K' }, // 19 Nhâm Dần  / Quý Mão
+  { ten: 'Phú Đăng Hỏa',     yNghia: 'Lửa đèn dầu',           nguHanh: 'H' }, // 20 Giáp Thìn / Ất Tỵ
+  { ten: 'Thiên Hà Thủy',    yNghia: 'Nước trên trời',        nguHanh: 'T' }, // 21 Bính Ngọ  / Đinh Mùi
+  { ten: 'Đại Dịch Thổ',     yNghia: 'Đất khu lớn',           nguHanh: 'O' }, // 22 Mậu Thân  / Kỷ Dậu
+  { ten: 'Thoa Xuyến Kim',   yNghia: 'Vàng trang sức',        nguHanh: 'K' }, // 23 Canh Tuất / Tân Hợi
+  { ten: 'Tang Đố Mộc',      yNghia: 'Gỗ cây dâu',            nguHanh: 'M' }, // 24 Nhâm Tý   / Quý Sửu
+  { ten: 'Đại Khê Thủy',     yNghia: 'Nước khe lớn',          nguHanh: 'T' }, // 25 Giáp Dần  / Ất Mão
+  { ten: 'Sa Trung Thổ',     yNghia: 'Đất lẫn trong cát',     nguHanh: 'O' }, // 26 Bính Thìn / Đinh Tỵ
+  { ten: 'Thiên Thượng Hỏa', yNghia: 'Lửa trên trời',         nguHanh: 'H' }, // 27 Mậu Ngọ   / Kỷ Mùi
+  { ten: 'Thạch Lựu Mộc',   yNghia: 'Cây thạch lựu',         nguHanh: 'M' }, // 28 Canh Thân / Tân Dậu
+  { ten: 'Đại Hải Thủy',    yNghia: 'Nước đại dương',         nguHanh: 'T' }, // 29 Nhâm Tuất / Quý Hợi
+];
+
+/**
  * Heavenly Stems (Thiên Can) - 10 stems, 1-based indexed
  * Index 0 is placeholder for direct mapping from original Python arrays
  */

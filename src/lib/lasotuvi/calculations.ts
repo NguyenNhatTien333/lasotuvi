@@ -1,7 +1,14 @@
-import { DIA_CHI, NGU_HANH_MAP, THIEN_CAN } from './constants';
+import { DIA_CHI, NAP_AM_NAMES, NGU_HANH_MAP, THIEN_CAN } from './constants';
+import type { NapAmEntry } from './constants';
 import { jdFromDate, lunarToSolar, solarToLunar } from './calendar';
 import { dichCung, mod } from './utils';
-import type { ChartInput, Cuc, Element, LunarDate, SolarDate } from './types';
+import type { ChartInput, Cuc, Element, LunarDate, SolarDate, YinYang } from './types';
+
+export const tinhAmDuongNamSinh = (year: number): YinYang => {
+  const soCuoiNam = Math.abs(year) % 10;
+  const laDuong = [4, 6, 8, 0, 2].includes(soCuoiNam);
+  return laDuong ? 1 : -1;
+};
 
 export const nguHanh = (tenHanh: string) => {
   const normalized = tenHanh as Element;
@@ -26,6 +33,24 @@ export const nguHanh = (tenHanh: string) => {
               : 'Thổ ngũ Cục',
     css: entry.css,
   };
+};
+
+/**
+ * Look up the Nạp Âm (納音) entry from a year's Can (1-10) and Chi (1-12).
+ *
+ * Algorithm: find the 0-based position in the 60-year sexagenary cycle, then
+ * divide by 2 to get the group index (0-29) into NAP_AM_NAMES.
+ *
+ * sexagenary_index satisfies:
+ *   sexIndex ≡ canNam - 1  (mod 10)
+ *   sexIndex ≡ chiNam - 1  (mod 12)
+ */
+export const getNapAmFromCanChi = (canNam: number, chiNam: number): NapAmEntry => {
+  let sexIndex = chiNam - 1; // start from chi (0-11), then step up by 12 until mod 10 matches can
+  while (sexIndex % 10 !== canNam - 1) {
+    sexIndex += 12;
+  }
+  return NAP_AM_NAMES[Math.floor((sexIndex % 60) / 2)];
 };
 
 export const ngayThangNam = (

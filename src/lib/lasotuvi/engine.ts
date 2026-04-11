@@ -16,6 +16,7 @@ import {
   timTrangSinh,
   timTriet,
   timTuVi,
+  tinhAmDuongNamSinh,
   canChiGio,
 } from './calculations';
 import { verifyCalendar } from './calendar';
@@ -176,7 +177,7 @@ export const generateChart = (input: ChartInput): Chart => {
   const hanhCuc = timCuc(base.cungMenh, canChiBase.canNam);
   const cuc = nguHanh(hanhCuc);
   const cucSo = cuc.cuc as Cuc;
-  const amDuongNamSinh = canNamData.amDuong;
+  const amDuongNamSinh = tinhAmDuongNamSinh(lunar.year);
   const amDuongChiNamSinh = chiNamData.amDuong;
   const amDuongNamNu = input.gender * amDuongNamSinh;
 

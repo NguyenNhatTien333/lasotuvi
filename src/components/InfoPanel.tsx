@@ -1,10 +1,15 @@
 import React from 'react';
-import { DIA_CHI, NGU_HANH_MAP, THIEN_CAN } from '@/lib/lasotuvi/constants';
+import { DIA_CHI, THIEN_CAN } from '@/lib/lasotuvi/constants';
+import { tinhAmDuongNamSinh, getNapAmFromCanChi } from '@/lib/lasotuvi/calculations';
 import type { Chart } from '@/lib/lasotuvi/types';
 import { getColorByElement } from './Cell';
 
 const gioiTinhText = (gender: number) => (gender === 1 ? 'Nam' : 'Nữ');
-const amDuongText  = (gender: number) => (gender === 1 ? 'Dương Nam' : 'Âm Nữ');
+const amDuongText = (gender: number, year: number) => {
+  const amDuong = tinhAmDuongNamSinh(year) === 1 ? 'Dương' : 'Âm';
+  const gioiTinh = gioiTinhText(gender);
+  return `${amDuong} ${gioiTinh}`;
+};
 
 const CUC_NAMES: Record<number, string> = {
   2: 'Thủy nhị cục',
@@ -38,10 +43,9 @@ export function InfoPanel({ chart }: { chart: Chart }) {
   const thanPalaceObj = palaces.find((p) => p.isThan);
   const chuThan = thanPalaceObj?.cungSao.find((s) => s.saoLoai === 1)?.saoTen ?? 'N/A';
 
-  // Mệnh element (from cung Mệnh's nguHanh)
-  const menhElement = menhPalaceObj?.cungNguHanh ?? 'O';
-  const menhElementColor = getColorByElement(menhElement);
-  const menhElementName  = NGU_HANH_MAP[menhElement]?.name ?? '';
+  // Nạp Âm Mệnh (from birth year Can-Chi)
+  const napAm = getNapAmFromCanChi(canChiInfo.canNam, canChiInfo.chiNam);
+  const napAmColor = getColorByElement(napAm.nguHanh);
 
   // Note flags
   const cucElement = CUC_ELEMENT[cuc];
@@ -134,12 +138,13 @@ export function InfoPanel({ chart }: { chart: Chart }) {
         >
           <div className={rowClass}>
             <span className={labelClass}>Âm Dương:</span>
-            <span className={valueClass}>{amDuongText(birthInfo.gender)}</span>
+            <span className={valueClass}>{amDuongText(birthInfo.gender, birthInfo.year)}</span>
           </div>
           <div className={rowClass}>
             <span className={labelClass}>Mệnh:</span>
-            <span className="font-bold" style={{ color: menhElementColor }}>
-              {menhElementName}
+            <span>
+              <span className="font-bold" style={{ color: napAmColor }}>{napAm.ten}</span>
+              <span className={valueClass}> ({napAm.yNghia})</span>
             </span>
           </div>
           <div className={rowClass}>

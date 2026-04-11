@@ -16,4 +16,11 @@ describe('InfoPanel', () => {
     expect(screen.getByText(/Chủ Thân/)).toBeInTheDocument();
     expect(screen.getByText(/Cục/)).toBeInTheDocument();
   });
+
+  it('renders âm dương label from year ending and gender', () => {
+    const chart = generateChart({ day: 15, month: 6, year: 2008, hour: 4, gender: -1, calendarType: 'duongLich', name: 'Nguyễn Thị B' });
+    render(<InfoPanel chart={chart} />);
+
+    expect(screen.getByText('Dương Nữ')).toBeInTheDocument();
+  });
 });
