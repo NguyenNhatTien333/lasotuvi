@@ -23,8 +23,60 @@ const CUC_ELEMENT: Record<number, 'T' | 'M' | 'K' | 'O' | 'H'> = {
   2: 'T', 3: 'M', 4: 'K', 5: 'O', 6: 'H',
 };
 
+const THAN_CU_BY_OFFSET: Record<number, string> = {
+  0: 'Mệnh',
+  2: 'Phúc Đức',
+  4: 'Quan Lộc',
+  6: 'Thiên Di',
+  8: 'Tài Bạch',
+  10: 'Phu Thê',
+};
+
+const getAmDuongPolarityNote = (
+  canNam: number,
+  lunarMonth: number,
+  lunarDay: number,
+  chiGio: number,
+) => {
+  const yearPolarity = THIEN_CAN[canNam]?.amDuong ?? 1;
+  const monthPolarity = lunarMonth % 2 === 1 ? 1 : -1;
+  const dayPolarity = lunarDay % 2 === 1 ? 1 : -1;
+  const hourPolarity = DIA_CHI[chiGio]?.amDuong ?? 1;
+
+  const duongCount = [yearPolarity, monthPolarity, dayPolarity, hourPolarity].filter((v) => v === 1).length;
+  const amCount = 4 - duongCount;
+
+  const isThuanLy = duongCount === amCount || duongCount === 4 || amCount === 4;
+  return isThuanLy ? 'Âm Dương thuận lý' : 'Âm Dương nghịch lý';
+};
+
+// Map ngũ hành để so sánh: T(Thủy), M(Mộc), H(Hỏa), O(Thổ), K(Kim)
+// Quy tắc: T sinh M, M sinh H, H sinh O, O sinh K, K sinh T
+// Khắc: T khắc H, H khắc K, K khắc M, M khắc O, O khắc T
+const getCucMenhRelationNote = (cucElement: 'T' | 'M' | 'K' | 'O' | 'H', menhElement: string) => {
+  const sinhRules: Record<string, boolean> = {
+    'TM': true, 'MH': true, 'HO': true, 'OK': true, 'KT': true,
+  };
+  const khacRules: Record<string, boolean> = {
+    'TH': true, 'HK': true, 'KM': true, 'MO': true, 'OT': true,
+  };
+
+  const combination = `${cucElement}${menhElement}`;
+  
+  if (sinhRules[combination]) {
+    return '✦ Cục sinh Mệnh (Cát)';
+  } else if (khacRules[combination]) {
+    return '✦ Cục khắc Mệnh (Hung)';
+  } else if (cucElement === menhElement) {
+    return '✦ Cục và Mệnh Bình Hòa';
+  } else {
+    // Mệnh khắc Cục
+    return '✦ Mệnh khắc Cục';
+  }
+};
+
 export function InfoPanel({ chart }: { chart: Chart }) {
-  const { birthInfo, canChiInfo, cuc, palaces, menhPalace } = chart;
+  const { birthInfo, canChiInfo, cuc, menhPalace, thanPalace } = chart;
 
   const namCan   = THIEN_CAN[canChiInfo.canNam]?.tenCan   ?? '';
   const namChi   = DIA_CHI[canChiInfo.chiNam]?.tenChi     ?? '';
@@ -35,13 +87,9 @@ export function InfoPanel({ chart }: { chart: Chart }) {
   const gioCan   = THIEN_CAN[canChiInfo.canGio]?.tenCan   ?? '';
   const gioChi   = DIA_CHI[canChiInfo.chiGio]?.tenChi     ?? '';
 
-  // Compute Chủ Mệnh from Cung Mệnh's chính tinh
-  const menhPalaceObj = palaces.find((p) => p.cungID === menhPalace);
-  const chuMenh = menhPalaceObj?.cungSao.find((s) => s.saoLoai === 1)?.saoTen ?? 'N/A';
-
-  // Compute Chủ Thân from Cung Thân
-  const thanPalaceObj = palaces.find((p) => p.isThan);
-  const chuThan = thanPalaceObj?.cungSao.find((s) => s.saoLoai === 1)?.saoTen ?? 'N/A';
+  // Chủ Mệnh an theo Địa Chi của cung Mệnh, Chủ Thân an theo Địa Chi năm sinh
+  const chuMenh = DIA_CHI[menhPalace]?.menhChu ?? 'N/A';
+  const chuThan = DIA_CHI[canChiInfo.chiNam]?.thanChu ?? 'N/A';
 
   // Nạp Âm Mệnh (from birth year Can-Chi)
   const napAm = getNapAmFromCanChi(canChiInfo.canNam, canChiInfo.chiNam);
@@ -49,7 +97,18 @@ export function InfoPanel({ chart }: { chart: Chart }) {
 
   // Note flags
   const cucElement = CUC_ELEMENT[cuc];
-  const isThangMenhDongCung = menhPalace === thanPalaceObj?.cungID;
+  const thanOffset = (thanPalace - menhPalace + 12) % 12;
+  const thanCu = THAN_CU_BY_OFFSET[thanOffset] ?? null;
+  const thanCuNote = thanCu
+    ? (thanCu === 'Mệnh' ? '✦ Thân Mệnh đồng cung' : `✦ Thân cư ${thanCu}`)
+    : null;
+  const amDuongPolarityNote = getAmDuongPolarityNote(
+    canChiInfo.canNam,
+    birthInfo.month,
+    birthInfo.day,
+    canChiInfo.chiGio,
+  );
+  const cucMenhRelationNote = getCucMenhRelationNote(cucElement, napAm.nguHanh);
 
   // Solar date display
   const solarDate = birthInfo.birthDaySolar
@@ -168,7 +227,9 @@ export function InfoPanel({ chart }: { chart: Chart }) {
           className="space-y-0.5 text-[10px] italic text-stone-600"
           style={{ borderTop: '1px solid #E5D9C6', paddingTop: '6px' }}
         >
-          {isThangMenhDongCung && <div>✦ Thân Mệnh đồng cung</div>}
+          <div className="font-semibold">✦ {amDuongPolarityNote}</div>
+          <div className="font-semibold">{cucMenhRelationNote}</div>
+          {thanCuNote && <div className="font-semibold">{thanCuNote}</div>}
         </div>
       </div>
     </div>

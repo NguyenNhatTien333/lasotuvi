@@ -81,13 +81,13 @@ export const THIEN_CAN: Array<ThienCan | null> = [
  */
 export const DIA_CHI: Array<DiaChi | null> = [
   null,
-  { id: 1, tenChi: 'Tý', tenHanh: 'T', menhChu: 'Tham lang', thanChu: 'Linh tinh', amDuong: 1 },
+  { id: 1, tenChi: 'Tý', tenHanh: 'T', menhChu: 'Tham lang', thanChu: 'Hỏa tinh', amDuong: 1 },
   { id: 2, tenChi: 'Sửu', tenHanh: 'O', menhChu: 'Cự môn', thanChu: 'Thiên tướng', amDuong: -1 },
   { id: 3, tenChi: 'Dần', tenHanh: 'M', menhChu: 'Lộc tồn', thanChu: 'Thiên lương', amDuong: 1 },
   { id: 4, tenChi: 'Mão', tenHanh: 'M', menhChu: 'Văn khúc', thanChu: 'Thiên đồng', amDuong: -1 },
   { id: 5, tenChi: 'Thìn', tenHanh: 'O', menhChu: 'Liêm trinh', thanChu: 'Văn xương', amDuong: 1 },
   { id: 6, tenChi: 'Tỵ', tenHanh: 'H', menhChu: 'Vũ khúc', thanChu: 'Thiên cơ', amDuong: -1 },
-  { id: 7, tenChi: 'Ngọ', tenHanh: 'H', menhChu: 'Phá quân', thanChu: 'Hỏa tinh', amDuong: 1 },
+  { id: 7, tenChi: 'Ngọ', tenHanh: 'H', menhChu: 'Phá quân', thanChu: 'Linh tinh', amDuong: 1 },
   { id: 8, tenChi: 'Mùi', tenHanh: 'O', menhChu: 'Vũ khúc', thanChu: 'Thiên tướng', amDuong: -1 },
   { id: 9, tenChi: 'Thân', tenHanh: 'K', menhChu: 'Liêm trinh', thanChu: 'Thiên lương', amDuong: 1 },
   { id: 10, tenChi: 'Dậu', tenHanh: 'K', menhChu: 'Văn khúc', thanChu: 'Thiên đồng', amDuong: -1 },

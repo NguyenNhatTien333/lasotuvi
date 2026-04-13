@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import { DIA_CHI } from '@/lib/lasotuvi/constants';
 import { generateChart } from '@/lib/lasotuvi/engine';
 import { InfoPanel } from './InfoPanel';
 
@@ -22,5 +23,25 @@ describe('InfoPanel', () => {
     render(<InfoPanel chart={chart} />);
 
     expect(screen.getByText('Dương Nữ')).toBeInTheDocument();
+  });
+
+  it('computes Chủ Mệnh and Chủ Thân from địa chi rules', () => {
+    const chart = generateChart({ day: 24, month: 10, year: 1991, hour: 4, gender: 1, calendarType: 'duongLich', name: 'Nguyễn Văn A' });
+    render(<InfoPanel chart={chart} />);
+
+    const expectedChuMenh = DIA_CHI[chart.menhPalace]?.menhChu;
+    const expectedChuThan = DIA_CHI[chart.canChiInfo.chiNam]?.thanChu;
+
+    expect(expectedChuMenh).toBeDefined();
+    expect(expectedChuThan).toBeDefined();
+    expect(screen.getByText(expectedChuMenh!)).toBeInTheDocument();
+    expect(screen.getByText(expectedChuThan!)).toBeInTheDocument();
+  });
+
+  it('shows âm dương thuận lý hoặc nghịch lý note', () => {
+    const chart = generateChart({ day: 24, month: 10, year: 1991, hour: 4, gender: 1, calendarType: 'duongLich', name: 'Nguyễn Văn A' });
+    render(<InfoPanel chart={chart} />);
+
+    expect(screen.getByText(/Âm Dương (thuận lý|nghịch lý)/)).toBeInTheDocument();
   });
 });
