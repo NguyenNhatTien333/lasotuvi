@@ -129,6 +129,23 @@ const nhapTieuHan = (palaces: Palace[], khoiTieuHan: number, gioiTinh: number, c
   });
 };
 
+const nhapNguyetHan = (
+  palaces: Palace[],
+  thangSinhAmLich: number,
+  gioSinhAmLich: number,
+  chiNam: number,
+) => {
+  const chiNamLabel = DIA_CHI[chiNam]?.tenChi ?? '';
+  const cungTieuVan = palaces.find((palace) => palace.tieuHan === chiNamLabel)?.cungID ?? 1;
+  const viTriSauThangSinh = dichCung(cungTieuVan, -(thangSinhAmLich - 1));
+  const viTriKhoiThang1 = dichCung(viTriSauThangSinh, gioSinhAmLich - 1);
+
+  palaces.forEach((palace) => {
+    const khoangCach = khoangCachCung(palace.cungID, viTriKhoiThang1, 1);
+    palace.nguyetHan = DIA_CHI[khoangCach + 1]?.tenChi ?? '';
+  });
+};
+
 const nhapSao = (palaces: Palace[], cungSo: number, ...stars: Star[]) => {
   const palace = palaces[cungSo - 1];
   stars.forEach((star) => {
@@ -163,6 +180,9 @@ const anTuHoa = (canNam: number, positions: Record<string, number>) => {
 
 export const generateChart = (input: ChartInput): Chart => {
   const lunar = normalizeInputToLunar(input);
+  if (input.viewYear < lunar.year) {
+    throw new Error('Năm xem phải lớn hơn hoặc bằng năm sinh âm lịch.');
+  }
   const adjustedMonthForStars = getAdjustedMonthForStarPlacement(lunar);
   const base = buildPalaces(lunar.month, input.hour);
   const canChiBase = getCanChiFull(lunar, lunar.originalSolar);
@@ -184,6 +204,7 @@ export const generateChart = (input: ChartInput): Chart => {
   nhapDaiHan(base.palaces, cucSo, input.gender * amDuongChiNamSinh, base.cungMenh);
   const khoiHan = dichCung(11, -3 * (canChiBase.chiNam - 1));
   nhapTieuHan(base.palaces, khoiHan, input.gender, canChiBase.chiNam);
+  nhapNguyetHan(base.palaces, lunar.month, input.hour, canChiBase.chiNam);
 
   const viTriTuVi = timTuVi(cucSo, lunar.day);
   nhapSao(base.palaces, viTriTuVi, STARS.saoTuVi);
@@ -390,6 +411,7 @@ export const generateChart = (input: ChartInput): Chart => {
       day: lunar.day,
       month: lunar.month,
       year: lunar.year,
+      viewYear: input.viewYear,
       hour: input.hour,
       gender: input.gender,
       isLeapMonth: lunar.isLeapMonth,
@@ -418,9 +440,9 @@ export const verifyEngine = (): boolean => {
   }
 
   const checks = [
-    generateChart({ day: 24, month: 10, year: 1991, hour: 4, gender: 1, calendarType: 'duongLich', name: 'Mốc 1991' }),
-    generateChart({ day: 29, month: 8, year: 1987, hour: 7, gender: -1, calendarType: 'duongLich', name: 'Mốc 1987' }),
-    generateChart({ day: 1, month: 1, year: 2000, hour: 1, gender: 1, calendarType: 'duongLich', name: 'Mốc 2000' }),
+    generateChart({ day: 24, month: 10, year: 1991, viewYear: 2026, hour: 4, gender: 1, calendarType: 'duongLich', name: 'Mốc 1991' }),
+    generateChart({ day: 29, month: 8, year: 1987, viewYear: 2026, hour: 7, gender: -1, calendarType: 'duongLich', name: 'Mốc 1987' }),
+    generateChart({ day: 1, month: 1, year: 2000, viewYear: 2026, hour: 1, gender: 1, calendarType: 'duongLich', name: 'Mốc 2000' }),
   ];
 
   return checks.every((chart) => chart.palaces.length === 12 && chart.palaces.every((palace) => palace.cungSao.length > 0));

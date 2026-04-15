@@ -121,12 +121,15 @@ export function InputForm({ value, pending = false, onChange, onSubmit }: FormPr
         </label>
 
         <label className="block">
-          <span className="mb-1 block text-sm text-stone-300">Múi giờ</span>
+          <span className="mb-1 block text-sm text-stone-300">Năm xem</span>
           <input
             type="number"
+            min={1000}
+            max={3000}
+            required
             className="w-full rounded-xl border border-stone-500/60 bg-stone-950/30 px-4 py-3 text-stone-50 outline-none transition focus:border-amber-300"
-            value={value.timezone ?? 7}
-            onChange={(event) => onChange({ ...value, timezone: Number(event.target.value) })}
+            value={value.viewYear}
+            onChange={(event) => onChange({ ...value, viewYear: Number(event.target.value) })}
           />
         </label>
       </div>

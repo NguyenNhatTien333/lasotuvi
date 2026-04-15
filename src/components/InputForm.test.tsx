@@ -10,10 +10,10 @@ const value: ChartInput = {
   day: 24,
   month: 10,
   year: 1991,
+  viewYear: 2026,
   hour: 4,
   gender: 1,
   calendarType: 'duongLich',
-  timezone: 7,
 };
 
 describe('InputForm', () => {

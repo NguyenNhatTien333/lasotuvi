@@ -6,7 +6,7 @@ import { Chart } from './Chart';
 
 describe('Chart', () => {
   it('renders a 12-palace chart with info panel', () => {
-    const chart = generateChart({ day: 24, month: 10, year: 1991, hour: 4, gender: 1, calendarType: 'duongLich' });
+    const chart = generateChart({ day: 24, month: 10, year: 1991, viewYear: 2026, hour: 4, gender: 1, calendarType: 'duongLich' });
     render(<Chart chart={chart} />);
 
     expect(screen.getByText('LÁ SỐ TỬ VI')).toBeInTheDocument();

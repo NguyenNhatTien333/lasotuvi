@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { DIA_CHI } from './constants';
 import { generateChart, verifyEngine } from './engine';
+import { dichCung } from './utils';
 
 describe('engine', () => {
   it('generates a complete chart from solar input', () => {
@@ -7,10 +9,10 @@ describe('engine', () => {
       day: 24,
       month: 10,
       year: 1991,
+      viewYear: 2026,
       hour: 4,
       gender: 1,
       calendarType: 'duongLich',
-      timezone: 7,
       name: 'Test User',
     });
 
@@ -27,6 +29,7 @@ describe('engine', () => {
       day: 24,
       month: 10,
       year: 1991,
+      viewYear: 2026,
       hour: 4,
       gender: 1,
       calendarType: 'duongLich',
@@ -57,6 +60,7 @@ describe('engine', () => {
       day: 24,
       month: 10,
       year: 1991,
+      viewYear: 2026,
       hour: 4,
       gender: 1,
       calendarType: 'duongLich',
@@ -67,6 +71,42 @@ describe('engine', () => {
     expect(thienPhu).toBeDefined();
     expect(thienPhu!.saoDacTinh).not.toBeNull();
     expect(thienPhu!.saoDacTinh).toBe(THIEN_PHU_STATUS[thienPhu!.saoViTriCung!]);
+  });
+
+  it('computes nguyetHan using tieu van, birth month, and birth hour', () => {
+    const chart = generateChart({
+      day: 1,
+      month: 12,
+      year: 2026,
+      viewYear: 2026,
+      hour: 7,
+      gender: 1,
+      calendarType: 'amLich',
+    });
+
+    const chiNamLabel = DIA_CHI[chart.canChiInfo.chiNam]?.tenChi ?? '';
+    const cungTieuVan = chart.palaces.find((palace) => palace.tieuHan === chiNamLabel)?.cungID;
+    expect(cungTieuVan).toBeDefined();
+
+    const viTriSauThangSinh = dichCung(cungTieuVan!, -(chart.birthInfo.month - 1));
+    const viTriKhoiThang1 = dichCung(viTriSauThangSinh, chart.birthInfo.hour - 1);
+    const cungThangTy = chart.palaces.find((palace) => palace.nguyetHan === 'Tý');
+
+    expect(cungThangTy?.cungID).toBe(viTriKhoiThang1);
+  });
+
+  it('throws when viewing year is earlier than lunar birth year', () => {
+    expect(() =>
+      generateChart({
+        day: 24,
+        month: 10,
+        year: 1991,
+        viewYear: 1990,
+        hour: 4,
+        gender: 1,
+        calendarType: 'duongLich',
+      }),
+    ).toThrow('Năm xem phải lớn hơn hoặc bằng năm sinh âm lịch.');
   });
 
   it('passes internal engine verification', () => {

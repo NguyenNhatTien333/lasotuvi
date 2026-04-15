@@ -99,6 +99,7 @@ export interface Palace {
   cungTrangSinh?: string;          // Tràng sinh lifecycle star (if any)
   daiHan?: number;                  // Major cycle year (Đại Hạn)
   tieuHan?: string;                 // Minor cycle year (Tiểu Hạn)
+  nguyetHan?: string;               // Monthly cycle label (Nguyệt Hạn)
   isThan?: boolean;                 // Cung Thân marker
   tuanTrung?: boolean;              // Tuần marker
   trietLo?: boolean;                // Triệt marker
@@ -125,6 +126,7 @@ export interface BirthInfo {
   day: number;                      // Lunar day
   month: number;                    // Lunar month
   year: number;                     // Lunar year
+  viewYear: number;                 // Year being viewed (for age calculation)
   hour: number;                     // Hour (Earthly branch, 1-12)
   gender: Gender;                   // Gender (1=male, -1=female)
   isLeapMonth: boolean;            // Is birth month a leap month
@@ -176,10 +178,10 @@ export interface ChartInput {
   day: number;
   month: number;
   year: number;
+  viewYear: number;
   hour: number;                    // 1-12 (Earthly branch)
   gender: Gender;
   calendarType: CalendarType;
-  timezone?: number;               // Default: 7 (GMT+7 for Vietnam)
   name?: string;
 }
 

@@ -19,6 +19,7 @@ const palace: Palace = {
   ],
   daiHan: 24,
   tieuHan: 'Tý',
+  nguyetHan: 'Tý',
   isThan: true,
   tuanTrung: false,
   trietLo: false,
@@ -28,6 +29,8 @@ describe('Cell', () => {
   it('renders palace metadata and categorized stars', () => {
     render(<Cell palace={palace} />);
 
+    expect(screen.getByText('Năm Tý')).toBeInTheDocument();
+    expect(screen.getByText('Tháng 1')).toBeInTheDocument();
     expect(screen.getByText('Mệnh')).toBeInTheDocument();
     expect(screen.getByText('<Thân>')).toBeInTheDocument();
     expect(screen.getByText(/Tử vi/)).toBeInTheDocument();

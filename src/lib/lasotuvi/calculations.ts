@@ -279,11 +279,15 @@ export const khoangCachCung = (cung1: number, cung2: number, chieu = 1): number 
 
 export const normalizeInputToLunar = (input: ChartInput): LunarDate & { originalSolar?: SolarDate } => {
   if (input.calendarType === 'duongLich') {
-    const lunar = solarToLunar(input.day, input.month, input.year, input.timezone ?? 7);
+    const lunar = solarToLunar(input.day, input.month, input.year, 7);
     return { ...lunar, originalSolar: { day: input.day, month: input.month, year: input.year } };
   }
 
   return { day: input.day, month: input.month, year: input.year, isLeapMonth: false };
+};
+
+export const calculateLunarAge = (birthYear: number, viewYear: number): number => {
+  return viewYear - birthYear + 1;
 };
 
 export const getAdjustedMonthForStarPlacement = (lunar: LunarDate): number => {
@@ -310,6 +314,14 @@ export const getCanChiFull = (lunar: LunarDate, originalSolar?: SolarDate) => {
     lunar.isLeapMonth,
   );
   return { canThang, canNam, chiNam, chiThang, canNgay, chiNgay };
+};
+
+export const getCanChiYearName = (year: number): string => {
+  const canNam = mod(year + 6, 10) + 1;
+  const chiNam = mod(year + 8, 12) + 1;
+  const can = THIEN_CAN[canNam]?.tenCan ?? '';
+  const chi = DIA_CHI[chiNam]?.tenChi ?? '';
+  return `${can} ${chi}`.trim();
 };
 
 export const getStemById = (id: number) => THIEN_CAN[id] ?? null;

@@ -1,4 +1,5 @@
 import React from 'react';
+import { DIA_CHI } from '@/lib/lasotuvi/constants';
 import type { Palace, Star, Element } from '@/lib/lasotuvi/types';
 
 // Maps element code → hex color per spec-2.md (Kim/Thổ) + Tailwind palette (Mộc/Thủy/Hỏa)
@@ -51,18 +52,32 @@ const StarItem = ({ star, size = 'sm' }: { star: Star; size?: 'sm' | 'lg' }) => 
 
 export function Cell({ palace }: { palace: Palace }) {
   const { primary, lifecycle, auspicious, inauspicious } = classifyStars(palace.cungSao);
+  const yearLabel = palace.tieuHan
+    ? `${palace.tieuHan}`.startsWith('Năm ') ? palace.tieuHan : `Năm ${palace.tieuHan}`
+    : '';
+  const nguyetHanIndex = palace.nguyetHan
+    ? DIA_CHI.findIndex((chi) => chi?.tenChi === palace.nguyetHan)
+    : -1;
+  const monthLabel = nguyetHanIndex > 0 ? `Tháng ${nguyetHanIndex}` : '';
 
   // Tràng sinh label from lifecycle stars
   const trangSinhLabel = lifecycle.length > 0 ? lifecycle[0].saoTen : null;
 
+  // Tuần / Triệt annotation
+  const tuanTrietLabel =
+    palace.tuanTrung && palace.trietLo ? 'Tuần - Triệt' :
+    palace.tuanTrung ? 'Tuần' :
+    palace.trietLo ? 'Triệt' :
+    null;
+
   return (
     <div
       className="relative flex min-h-[160px] flex-col overflow-hidden bg-[#FFFEF5] p-1.5"
-      style={{ border: '1px solid #C4B49A' }}
+      style={{ border: tuanTrietLabel ? '2px solid #5A3E1B' : '1px solid #C4B49A' }}
     >
       {/* ── HEADER: tieuHan left | tên cung center | daiHan right ── */}
       <div className="mb-0.5 flex items-start justify-between text-[9px] leading-tight md:text-[10px]">
-        <div className="text-stone-500">{palace.tieuHan ?? ''}</div>
+        <div className="text-stone-500">{yearLabel}</div>
         <div className="flex flex-col items-center text-center">
           <span className="font-bold uppercase tracking-wide text-stone-800 md:text-[11px]">
             {palace.palaceRole ?? palace.cungTen}
@@ -118,11 +133,19 @@ export function Cell({ palace }: { palace: Palace }) {
 
       {/* ── FOOTER: tràng sinh left | tháng right ── */}
       <div
-        className="mt-0.5 flex items-end justify-between text-[9px] text-stone-600"
+        className="mt-0.5 flex items-center justify-between text-[9px] text-stone-600"
         style={{ borderTop: '1px solid #E5D9C6' }}
       >
         <span>{trangSinhLabel ?? ''}</span>
-        <span>{palace.tieuHan ? `Tháng ${palace.tieuHan}` : ''}</span>
+        {tuanTrietLabel ? (
+          <span
+            className="rounded px-1 text-[8px] font-bold leading-none"
+            style={{ backgroundColor: '#F5EDD8', color: '#5A3E1B', border: '1px solid #5A3E1B' }}
+          >
+            {tuanTrietLabel}
+          </span>
+        ) : null}
+        <span>{monthLabel}</span>
       </div>
     </div>
   );

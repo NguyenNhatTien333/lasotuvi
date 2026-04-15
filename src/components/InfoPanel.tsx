@@ -1,6 +1,6 @@
 import React from 'react';
 import { DIA_CHI, THIEN_CAN } from '@/lib/lasotuvi/constants';
-import { tinhAmDuongNamSinh, getNapAmFromCanChi } from '@/lib/lasotuvi/calculations';
+import { calculateLunarAge, getCanChiYearName, tinhAmDuongNamSinh, getNapAmFromCanChi } from '@/lib/lasotuvi/calculations';
 import type { Chart } from '@/lib/lasotuvi/types';
 import { getColorByElement } from './Cell';
 
@@ -115,6 +115,8 @@ export function InfoPanel({ chart }: { chart: Chart }) {
     ? `${birthInfo.birthDaySolar.day}/${birthInfo.birthDaySolar.month}/${birthInfo.birthDaySolar.year}`
     : null;
   const lunarDate = `${birthInfo.day}/${birthInfo.month}/${birthInfo.year}${birthInfo.isLeapMonth ? ' (Nhuận)' : ''}`;
+  const lunarAge = calculateLunarAge(birthInfo.year, birthInfo.viewYear);
+  const viewYearCanChi = getCanChiYearName(birthInfo.viewYear);
 
   const rowClass   = 'flex gap-2 items-baseline text-[11px] md:text-xs';
   const labelClass = 'text-stone-500 w-[72px] shrink-0';
@@ -162,6 +164,14 @@ export function InfoPanel({ chart }: { chart: Chart }) {
           <div className={rowClass}>
             <span className={labelClass}>Giờ sinh:</span>
             <span className={valueClass}>{gioChi}</span>
+          </div>
+          <div className={rowClass}>
+            <span className={labelClass}>Năm xem:</span>
+            <span className={valueClass}>{birthInfo.viewYear} ({viewYearCanChi})</span>
+          </div>
+          <div className={rowClass}>
+            <span className={labelClass}>Tuổi âm:</span>
+            <span className={valueClass}>{lunarAge} tuổi</span>
           </div>
         </div>
 

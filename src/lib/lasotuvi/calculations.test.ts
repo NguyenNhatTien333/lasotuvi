@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
+  calculateLunarAge,
   canChiGio,
   canChiNgay,
   canChiNgayThangNam,
+  getCanChiYearName,
   getAdjustedMonthForStarPlacement,
   getCanChiFull,
   khoangCachCung,
@@ -78,5 +80,15 @@ describe('calculations', () => {
     expect(tinhAmDuongNamSinh(2008)).toBe(1);
     expect(tinhAmDuongNamSinh(1991)).toBe(-1);
     expect(tinhAmDuongNamSinh(2000)).toBe(1);
+  });
+
+  it('calculates lunar age from viewing year', () => {
+    expect(calculateLunarAge(1991, 2026)).toBe(36);
+    expect(calculateLunarAge(2000, 2026)).toBe(27);
+  });
+
+  it('maps Gregorian year to Can Chi name', () => {
+    expect(getCanChiYearName(2026)).toBe('Bính Ngọ');
+    expect(getCanChiYearName(1995)).toBe('Ất Hợi');
   });
 });

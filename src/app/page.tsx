@@ -24,10 +24,10 @@ const initialInput: ChartInput = {
   day: 24,
   month: 10,
   year: 1991,
+  viewYear: new Date().getFullYear(),
   hour: 4,
   gender: 1,
   calendarType: 'duongLich',
-  timezone: 7,
 };
 
 const reducer = (state: State, action: Action): State => {
