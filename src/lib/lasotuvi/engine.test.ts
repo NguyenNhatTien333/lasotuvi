@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { DIA_CHI } from './constants';
 import { generateChart, verifyEngine } from './engine';
-import { dichCung } from './utils';
+import { dichCung, mod } from './utils';
 
 describe('engine', () => {
   it('generates a complete chart from solar input', () => {
@@ -84,12 +84,18 @@ describe('engine', () => {
       calendarType: 'amLich',
     });
 
-    const chiNamLabel = DIA_CHI[chart.canChiInfo.chiNam]?.tenChi ?? '';
-    const cungTieuVan = chart.palaces.find((palace) => palace.tieuHan === chiNamLabel)?.cungID;
-    expect(cungTieuVan).toBeDefined();
+    // Bước 1: Calculate Chi of viewing year and use it as cung Tiểu vận
+    const viewYear = 2026;
+    const chiNamXem = mod(viewYear + 8, 12) + 1;
+    const cungTieuVan = chiNamXem;
 
-    const viTriSauThangSinh = dichCung(cungTieuVan!, -(chart.birthInfo.month - 1));
+    // Bước 2: Count backwards from cung Tiểu vận by birth month
+    const viTriSauThangSinh = dichCung(cungTieuVan, -(chart.birthInfo.month - 1));
+    
+    // Bước 3: Count forwards by birth hour to find Tháng 1 starting position
     const viTriKhoiThang1 = dichCung(viTriSauThangSinh, chart.birthInfo.hour - 1);
+    
+    // The palace with nguyetHan === 'Tý' (month 1) should be at viTriKhoiThang1
     const cungThangTy = chart.palaces.find((palace) => palace.nguyetHan === 'Tý');
 
     expect(cungThangTy?.cungID).toBe(viTriKhoiThang1);
@@ -111,5 +117,35 @@ describe('engine', () => {
 
   it('passes internal engine verification', () => {
     expect(verifyEngine()).toBe(true);
+  });
+
+  it('verifies nguyetHan for case 1: born 24/1/1996, hour Ngọ, viewing 2026 should start at Sửu', () => {
+    const chart = generateChart({
+      day: 24,
+      month: 1,
+      year: 1996,
+      viewYear: 2026,
+      hour: 7, // Ngọ
+      gender: 1,
+      calendarType: 'duongLich',
+    });
+
+    const cungThangTy = chart.palaces.find((palace) => palace.nguyetHan === 'Tý');
+    expect(cungThangTy?.cungID).toBe(2); // Sửu
+  });
+
+  it('verifies nguyetHan for case 2: born 12/9/1997, hour Dần, viewing 2026 starts at Sửu', () => {
+    const chart = generateChart({
+      day: 12,
+      month: 9,
+      year: 1997,
+      viewYear: 2026,
+      hour: 3, // Dần
+      gender: -1,
+      calendarType: 'duongLich',
+    });
+
+    const cungThangTy = chart.palaces.find((palace) => palace.nguyetHan === 'Tý');
+    expect(cungThangTy?.cungID).toBe(2); // Sửu
   });
 });

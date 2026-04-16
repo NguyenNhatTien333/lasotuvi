@@ -20,7 +20,7 @@ import {
   canChiGio,
 } from './calculations';
 import { verifyCalendar } from './calendar';
-import { dichCung } from './utils';
+import { dichCung, mod } from './utils';
 import type { Chart, ChartInput, Cuc, Palace, PalaceName, Star, StarStatus } from './types';
 
 const HANH_CUNG: Array<'T' | 'O' | 'M' | 'H' | 'K' | null> = [null, 'T', 'O', 'M', 'M', 'O', 'H', 'H', 'O', 'K', 'K', 'O', 'T'];
@@ -133,11 +133,19 @@ const nhapNguyetHan = (
   palaces: Palace[],
   thangSinhAmLich: number,
   gioSinhAmLich: number,
-  chiNam: number,
+  viewYear: number,
 ) => {
-  const chiNamLabel = DIA_CHI[chiNam]?.tenChi ?? '';
-  const cungTieuVan = palaces.find((palace) => palace.tieuHan === chiNamLabel)?.cungID ?? 1;
+  // Bước 1: Xác định cung Tiểu vận của năm xem
+  // Tính Chi của năm xem (năm 2026 là Bính Ngọ = Chi 7)
+  const chiNamXem = mod(viewYear + 8, 12) + 1;
+  // Cung Tiểu vận chính là cung có cungChi = viewing year's Chi
+  // Vì 12 cung tương ứng với 12 Chi: cung 1=Tý, cung 2=Sửu, ..., cung 12=Hợi
+  const cungTieuVan = chiNamXem;
+
+  // Bước 2: Đếm ngược từ cung Tiểu vận đến tháng sinh
   const viTriSauThangSinh = dichCung(cungTieuVan, -(thangSinhAmLich - 1));
+
+  // Bước 3: Đếm xuôi từ vị trí tháng sinh đến giờ sinh để tìm Tháng 1
   const viTriKhoiThang1 = dichCung(viTriSauThangSinh, gioSinhAmLich - 1);
 
   palaces.forEach((palace) => {
@@ -204,7 +212,7 @@ export const generateChart = (input: ChartInput): Chart => {
   nhapDaiHan(base.palaces, cucSo, input.gender * amDuongChiNamSinh, base.cungMenh);
   const khoiHan = dichCung(11, -3 * (canChiBase.chiNam - 1));
   nhapTieuHan(base.palaces, khoiHan, input.gender, canChiBase.chiNam);
-  nhapNguyetHan(base.palaces, lunar.month, input.hour, canChiBase.chiNam);
+  nhapNguyetHan(base.palaces, lunar.month, input.hour, input.viewYear);
 
   const viTriTuVi = timTuVi(cucSo, lunar.day);
   nhapSao(base.palaces, viTriTuVi, STARS.saoTuVi);

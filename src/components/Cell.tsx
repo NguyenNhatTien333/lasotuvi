@@ -76,8 +76,8 @@ export function Cell({ palace }: { palace: Palace }) {
       style={{ border: tuanTrietLabel ? '2px solid #5A3E1B' : '1px solid #C4B49A' }}
     >
       {/* ── HEADER: tieuHan left | tên cung center | daiHan right ── */}
-      <div className="mb-0.5 flex items-start justify-between text-[9px] leading-tight md:text-[10px]">
-        <div className="text-stone-500">{yearLabel}</div>
+      <div className="mb-0.5 grid grid-cols-[1fr_auto_1fr] items-start text-[9px] leading-tight md:text-[10px]">
+        <div className="min-w-0 text-stone-500">{yearLabel}</div>
         <div className="flex flex-col items-center text-center">
           <span className="font-bold uppercase tracking-wide text-stone-800 md:text-[11px]">
             {palace.palaceRole ?? palace.cungTen}
@@ -88,7 +88,7 @@ export function Cell({ palace }: { palace: Palace }) {
             </span>
           ) : null}
         </div>
-        <div className="text-right text-stone-600">
+        <div className="min-w-0 text-right text-stone-600">
           {palace.daiHan ? <div>{palace.daiHan}</div> : null}
         </div>
       </div>
@@ -133,10 +133,10 @@ export function Cell({ palace }: { palace: Palace }) {
 
       {/* ── FOOTER: tràng sinh left | tháng right ── */}
       <div
-        className="mt-0.5 flex items-center justify-between text-[9px] text-stone-600"
+        className="mt-0.5 grid grid-cols-[1fr_auto_1fr] items-center text-[9px] text-stone-600"
         style={{ borderTop: '1px solid #E5D9C6' }}
       >
-        <span>{trangSinhLabel ?? ''}</span>
+        <span className="min-w-0">{trangSinhLabel ?? ''}</span>
         {tuanTrietLabel ? (
           <span
             className="rounded px-1 text-[8px] font-bold leading-none"
@@ -145,7 +145,7 @@ export function Cell({ palace }: { palace: Palace }) {
             {tuanTrietLabel}
           </span>
         ) : null}
-        <span>{monthLabel}</span>
+        <span className="min-w-0 text-right">{monthLabel}</span>
       </div>
     </div>
   );
